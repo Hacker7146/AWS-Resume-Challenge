@@ -1,0 +1,46 @@
+name: Backend CI/CD
+
+on:
+  push:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend.yml"
+  workflow_dispatch:
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest boto3 aws-sam-cli
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Configure AWS credentials
+        if: github.ref == 'refs/heads/main'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build and deploy SAM
+        if: github.ref == 'refs/heads/main'
+        run: |
+          sam build
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ secrets.SAM_STACK_NAME }}

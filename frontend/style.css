@@ -1,0 +1,28 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #1f2937;
+}
+
+.resume {
+  max-width: 760px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+}
+
+h1,
+h2 {
+  color: #0f172a;
+}
+
+a {
+  color: #2563eb;
+}
